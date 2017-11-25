@@ -7,24 +7,24 @@
 
 import Foundation
 
-enum Dependency: Hashable {
+public enum Dependency: Hashable {
   case carthage(String)
   
-  var asString: String {
+  internal var asString: String {
     switch self {
     case let .carthage(name):
       return name
     }
   }
   
-  var hashValue: Int {
+ public var hashValue: Int {
     switch self {
     case let .carthage(name):
       return name.hashValue
     }
   }
   
-  static func ==(lhs: Dependency, rhs: Dependency) -> Bool {
+  public static func ==(lhs: Dependency, rhs: Dependency) -> Bool {
     switch (lhs, rhs) {
     case let (.carthage(leftName), .carthage(rightName)):
       return leftName == rightName

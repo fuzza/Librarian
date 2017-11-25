@@ -7,7 +7,7 @@
 
 import Foundation
 
-class Project {
+public class Project {
   var name: String
   var targets: [Target]
   
@@ -26,8 +26,8 @@ class Project {
     return targets.first { $0.name == name }
   }
   
-  init(name: String,
-       targets: [Target]) {
+  public init(name: String,
+              targets: [Target]) {
     self.name = name
     self.targets = targets
   }

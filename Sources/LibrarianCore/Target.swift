@@ -7,7 +7,13 @@
 
 import Foundation
 
-struct Target {
-  var name: String
-  var dependencies: [Dependency]
+public struct Target {
+  internal var name: String
+  internal var dependencies: [Dependency]
+  
+  public init(name: String,
+              dependencies: [Dependency]) {
+    self.name = name
+    self.dependencies = dependencies
+  }
 }

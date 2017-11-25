@@ -2,38 +2,21 @@ import Foundation
 import xcproj
 import PathKit
 
-let sampleProjectName: Path = "Sample.xcodeproj"
-let basePath: Path = "/Users/fuzza/Development/Librarian/"
-let sampleProjectFolder: Path = basePath + "Sample/"
-let sampleProjectPath: Path = sampleProjectFolder + sampleProjectName
-
-let carthageRelativePath: Path = "Carthage/Build/iOS"
-
-let inputFolder = "$(SRCROOT)/Carthage/Build/iOS/"
-let outputFolder = "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/"
-let scriptBody = "/usr/local/bin/carthage copy-frameworks"
-
-let sample = Project(
-  name: "Sample",
-  targets: [
-    Target(
-      name: "Sample",
-      dependencies: [
-        .carthage("RxSwift"),
-        .carthage("RxCocoa")
-      ]),
-    Target(
-      name: "SampleTests",
-      dependencies: [
-        .carthage("RxSwift"),
-        .carthage("RxCocoa"),
-        .carthage("RxTest"),
-        .carthage("RxBlocking")
-      ])
-  ]
-)
-
-public func run() {
+public func run(manifest: Project) {
+  
+  let sampleProjectName: Path = Path(manifest.name)
+  
+  let basePath: Path = "/Users/fuzza/Development/Librarian/"
+  let sampleProjectFolder: Path = basePath + "Sample/"
+  let sampleProjectPath: Path = sampleProjectFolder + sampleProjectName
+  
+  let carthageRelativePath: Path = "Carthage/Build/iOS"
+  
+  let inputFolder = "$(SRCROOT)/Carthage/Build/iOS/"
+  let outputFolder = "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/"
+  let scriptBody = "/usr/local/bin/carthage copy-frameworks"
+  
+  
   let projectFile = try! XcodeProj(path: sampleProjectPath)
   let pbxproj = projectFile.pbxproj
   
@@ -127,7 +110,7 @@ public func run() {
    6FD7C34D1FC8BA2800971D97 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FD7C34C1FC8BA2700971D97 /* RxCocoa.framework */; };
    */
   
-  let linkedFrameworks = sample.resolveAllDependencies()
+  let linkedFrameworks = manifest.resolveAllDependencies()
     .map { $0.asString }
     .map {
       LinkedFramework(name: $0,
@@ -160,8 +143,8 @@ public func run() {
   pbxproj.objects.nativeTargets
     .map { (_, value) in value }
     .forEach { target in
-      let targetModel = sample.target(target.name)!
-      let dependencies = sample.resolveDependencies(for: targetModel).map { $0.asString }
+      let targetModel = manifest.target(target.name)!
+      let dependencies = manifest.resolveDependencies(for: targetModel).map { $0.asString }
       let inputPaths = dependencies.map { inputFolder + $0 + ".framework" }
       let outputPaths = dependencies.map { outputFolder + $0 + ".framework" }
       
