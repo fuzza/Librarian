@@ -2,106 +2,38 @@ import Foundation
 import xcproj
 import PathKit
 
-
-
 let sampleProjectName: Path = "Sample.xcodeproj"
 let basePath: Path = "/Users/fuzza/Development/Librarian/"
 let sampleProjectFolder: Path = basePath + "Sample/"
 let sampleProjectPath: Path = sampleProjectFolder + sampleProjectName
+
 let carthageRelativePath: Path = "Carthage/Build/iOS"
 
 let inputFolder = "$(SRCROOT)/Carthage/Build/iOS/"
 let outputFolder = "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/"
-
 let scriptBody = "/usr/local/bin/carthage copy-frameworks"
 
-enum Dependency: Hashable {
-  case carthage(String)
-  
-  var asString: String {
-    switch self {
-    case let .carthage(name):
-      return name
-    }
-  }
-  
-  var hashValue: Int {
-    switch self {
-    case let .carthage(name):
-      return name.hashValue
-    }
-  }
-  
-  static func ==(lhs: Dependency, rhs: Dependency) -> Bool {
-    switch (lhs, rhs) {
-    case let (.carthage(leftName), .carthage(rightName)):
-      return leftName == rightName
-    }
-  }
-}
-
-struct Target {
-  var name: String
-  var dependencies: [Dependency]
-}
-
-class Project {
-  var name: String
-  var targets: [Target]
-  
-  func resolveDependencies(for target: Target) -> [Dependency] {
-    return target.dependencies
-  }
-  
-  func resolveAllDependencies() -> Set<Dependency> {
-    let flattenedDependencies = targets
-      .map { self.resolveDependencies(for: $0) }
-      .flatMap { $0 }
-    return Set(flattenedDependencies)
-  }
-  
-  func target(_ name: String) -> Target? {
-    return targets.first { $0.name == name }
-  }
-  
-  init(name: String,
-       targets: [Target]) {
-    self.name = name
-    self.targets = targets
-  }
-}
-
-struct LinkedFramework {
-  var name: String
-  var fileReferenceUid: String
-  var buildFileUid: String
-  
-  var fileName: String {
-    return name + ".framework"
-  }
-}
+let sample = Project(
+  name: "Sample",
+  targets: [
+    Target(
+      name: "Sample",
+      dependencies: [
+        .carthage("RxSwift"),
+        .carthage("RxCocoa")
+      ]),
+    Target(
+      name: "SampleTests",
+      dependencies: [
+        .carthage("RxSwift"),
+        .carthage("RxCocoa"),
+        .carthage("RxTest"),
+        .carthage("RxBlocking")
+      ])
+  ]
+)
 
 public func run() {
-  let sample = Project(
-    name: "Sample",
-    targets: [
-      Target(
-        name: "Sample",
-        dependencies: [
-          .carthage("RxSwift"),
-          .carthage("RxCocoa")
-        ]),
-      Target(
-        name: "SampleTests",
-        dependencies: [
-          .carthage("RxSwift"),
-          .carthage("RxCocoa"),
-          .carthage("RxTest"),
-          .carthage("RxBlocking")
-        ])
-    ]
-  )
-  
   let projectFile = try! XcodeProj(path: sampleProjectPath)
   let pbxproj = projectFile.pbxproj
   
