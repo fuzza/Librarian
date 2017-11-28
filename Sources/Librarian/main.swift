@@ -1,7 +1,7 @@
 import LibrarianCore
 import Commander
 
-let config = Option("config", "librarian.yml", description: "The number of times to print.")
+let config = Option("config", "librarian.yml", description: "Path to configuration file")
 let integrate = command(config) { config in
    _ = try ConfigLoader.loadConfig(config)
     

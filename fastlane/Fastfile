@@ -1,0 +1,27 @@
+fastlane_version "2.32.1"
+
+default_platform :ios
+
+platform :ios do
+  before_all do
+  end
+
+  desc "Runs all the tests"
+  lane :test do
+    sh "swift test"
+  end
+
+  desc "Creates xcode project"
+  lane :xcode do
+    Dir.chdir("..") do
+      sh "swift package generate-xcodeproj && open *.xcodeproj & sourcery --watch"
+    end
+  end
+
+
+  after_all do |lane|
+  end
+
+  error do |lane, exception|
+  end
+end

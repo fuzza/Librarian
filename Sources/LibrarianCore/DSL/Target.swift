@@ -9,7 +9,7 @@ import Foundation
 
 public struct Target {
   var name: String
-var dependencies: [Dependency]
+  var dependencies: [Dependency]
   
   public init(name: String,
               dependencies: [Dependency]) {

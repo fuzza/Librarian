@@ -1,0 +1,9 @@
+sources:
+  include:
+    - Sources/LibrarianCore
+  exclude:
+    - Sources/LibrarianCore/Codegen
+output:
+  Sources/LibrarianCore/Codegen
+templates:
+  - Templates
