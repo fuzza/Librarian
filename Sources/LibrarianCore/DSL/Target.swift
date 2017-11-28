@@ -8,8 +8,8 @@
 import Foundation
 
 public struct Target {
-  internal var name: String
-  internal var dependencies: [Dependency]
+  var name: String
+var dependencies: [Dependency]
   
   public init(name: String,
               dependencies: [Dependency]) {

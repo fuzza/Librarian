@@ -6,17 +6,20 @@ import PackageDescription
 let package = Package(
   name: "Librarian",
   dependencies: [
-    .package(url: "https://github.com/xcodeswift/xcproj.git", from: "1.0.0")
+    .package(url: "https://github.com/xcodeswift/xcproj.git", from: "1.0.0"),
+    .package(url: "https://github.com/behrang/YamlSwift.git", from: "3.4.0"),
+    .package(url: "https://github.com/kylef/Commander.git", .upToNextMinor(from: "0.6.0")),
+    .package(url: "https://github.com/onevcat/Rainbow", from: "3.0.0")
   ],
   targets: [
     .target(
       name: "Librarian",
-      dependencies: ["LibrarianCore"]),
+      dependencies: ["LibrarianCore", "Commander", "Rainbow"]),
     .target(
       name: "LibrarianCore",
-      dependencies: ["xcproj"]),
+      dependencies: ["xcproj", "Yaml"]),
     .testTarget(
       name: "LibrarianTests",
-      dependencies: ["LibrarianCore", "xcproj"])
+      dependencies: ["LibrarianCore", "xcproj", "Yaml"])
   ]
 )
