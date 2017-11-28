@@ -26,7 +26,7 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - AutoEquatable for classes, protocols, structs
 
 // MARK: - AutoEquatable for Enums
-// MARK: - ConfigLoaderError AutoEquatable
+// MARK: - ConfigLoaderErrors AutoEquatable
 extension ConfigLoaderErrors: Equatable {}
 public func == (lhs: ConfigLoaderErrors, rhs: ConfigLoaderErrors) -> Bool {
     switch (lhs, rhs) {
