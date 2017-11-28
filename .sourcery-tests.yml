@@ -4,9 +4,7 @@ sources:
   exclude:
     - Sources/LibrarianCore/Codegen
 output:
-  Sources/LibrarianCore/Codegen
+  Tests/LibrarianTests/Codegen
 templates:
   include:
-    - Templates
-  exclude:
     - Templates/AutoMockable.stencil

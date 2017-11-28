@@ -1,0 +1,18 @@
+project: Sample.xcodeproj
+targets:
+  - name: Sample
+    dependencies:
+      - type: carthage
+        name: RxSwift
+      - type: carthage
+        name: RxCocoa
+  - name: SampleTests
+    dependencies:
+      - type: carthage
+        name: RxSwift
+      - type: carthage
+        name: RxCocoa
+      - type: carthage
+        name: RxBlocking
+      - type: carthage
+        name: RxTest

@@ -7,5 +7,6 @@
 
 import Foundation
 
-protocol AutoEquatable {}
-protocol AutoHashable {}
+public protocol AutoEquatable {}
+public protocol AutoHashable {}
+public protocol AutoMockable {}

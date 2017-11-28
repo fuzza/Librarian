@@ -44,3 +44,13 @@ fileprivate func hashDictionary<T: Hashable, U: Hashable>(_ dictionary: [T: U]?)
 // MARK: - AutoHashable for classes, protocols, structs
 
 // MARK: - AutoHashable for Enums
+
+// MARK: - Dependency AutoHashable
+extension Dependency: Hashable {
+    public var hashValue: Int {
+        switch self {
+        case .carthage(let data):
+            return combineHashes([1, data.hashValue])
+        }
+    }
+}

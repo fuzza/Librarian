@@ -40,6 +40,11 @@ Runs all the tests
 fastlane ios xcode
 ```
 Creates xcode project
+### ios mocks
+```
+fastlane ios mocks
+```
+
 
 ----
 

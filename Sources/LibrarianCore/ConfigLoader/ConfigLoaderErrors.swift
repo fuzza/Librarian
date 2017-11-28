@@ -10,7 +10,7 @@ import Foundation
 public enum ConfigLoaderErrors: Error {
   case noFile(String)
   case invalidFile(String)
-  case decodingError(String)
+  case readingError(String, String) // path, reason
 }
 
 extension ConfigLoaderErrors: CustomStringConvertible {
@@ -20,8 +20,8 @@ extension ConfigLoaderErrors: CustomStringConvertible {
       return "Can't find config at path \"\(path)\""
     case let .invalidFile(path):
       return "Config file \"\(path)\" is not a valid .yml config"
-    case let .decodingError(error):
-      return "Can't parse config file: \"\(error)\""
+    case let .readingError(path, reason):
+      return "Can't open config at \"\(path)\": \(reason)"
     }
   }
 }

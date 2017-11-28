@@ -7,9 +7,9 @@
 
 import Foundation
 
-public class Project {
-  var name: String
-  var targets: [Target]
+public struct Project: AutoEquatable {
+  internal var name: String
+  internal var targets: [Target]
   
   func resolveDependencies(for target: Target) -> [Dependency] {
     return target.dependencies

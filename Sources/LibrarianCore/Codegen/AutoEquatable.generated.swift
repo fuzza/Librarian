@@ -24,6 +24,20 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 
 
 // MARK: - AutoEquatable for classes, protocols, structs
+// MARK: - Project AutoEquatable
+extension Project: Equatable {}
+public func == (lhs: Project, rhs: Project) -> Bool {
+    guard lhs.name == rhs.name else { return false }
+    guard lhs.targets == rhs.targets else { return false }
+    return true
+}
+// MARK: - Target AutoEquatable
+extension Target: Equatable {}
+public func == (lhs: Target, rhs: Target) -> Bool {
+    guard lhs.name == rhs.name else { return false }
+    guard lhs.dependencies == rhs.dependencies else { return false }
+    return true
+}
 
 // MARK: - AutoEquatable for Enums
 // MARK: - ConfigLoaderErrors AutoEquatable
@@ -34,8 +48,18 @@ public func == (lhs: ConfigLoaderErrors, rhs: ConfigLoaderErrors) -> Bool {
         return lhs == rhs
     case (.invalidFile(let lhs), .invalidFile(let rhs)):
         return lhs == rhs
-    case (.decodingError(let lhs), .decodingError(let rhs)):
-        return lhs == rhs
+    case (.readingError(let lhs), .readingError(let rhs)):
+        if lhs.0 != rhs.0 { return false }
+        if lhs.1 != rhs.1 { return false }
+        return true
     default: return false
+    }
+}
+// MARK: - Dependency AutoEquatable
+extension Dependency: Equatable {}
+public func == (lhs: Dependency, rhs: Dependency) -> Bool {
+    switch (lhs, rhs) {
+    case (.carthage(let lhs), .carthage(let rhs)):
+        return lhs == rhs
     }
 }

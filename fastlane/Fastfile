@@ -14,10 +14,15 @@ platform :ios do
   desc "Creates xcode project"
   lane :xcode do
     Dir.chdir("..") do
-      sh "swift package generate-xcodeproj && open *.xcodeproj & sourcery --watch"
+      sh "swift package generate-xcodeproj && open *.xcodeproj & "
     end
   end
 
+  lane :mocks do
+    Dir.chdir("..") do
+      sh "sourcery --config .sourcery-tests.yml"
+    end
+  end
 
   after_all do |lane|
   end
