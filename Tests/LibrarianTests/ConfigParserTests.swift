@@ -50,16 +50,21 @@ class ConfigParserTests: XCTestCase {
       targets:
         - name: test
           dependencies:
-           - type: carthage
-             name: RxSwift
+            - RxSwift
+            - RxCocoa
+        - name: app
+          dependencies:
+            - RxTest
+            - RxBlocking
       """
 
     let loader = makeLoader(returnedValue: fixture);
     let project = try! makeSut(loader).parseConfig(at: "config.yml")
     
-    XCTAssertEqual(project.targets.count, 1)
+    XCTAssertEqual(project.targets.count, 2)
     XCTAssertEqual(project.name, "Librarian.xcodeproj")
-    XCTAssertEqual(project.targets.first, Target(name: "test", dependencies:[.carthage("RxSwift")]))
+    XCTAssertEqual(project.targets.first, Target(name: "test", dependencies:[.carthage("RxSwift"), .carthage("RxCocoa")]))
+    XCTAssertEqual(project.targets.last, Target(name: "app", dependencies:[.carthage("RxTest"), .carthage("RxBlocking")]))
   }
   
   // MARK: Helpers

@@ -53,13 +53,7 @@ extension Target {
 
 extension Dependency {
   init(yaml: Yaml) throws {
-    guard let type = yaml["type"].string else { throw ConfigParserErrors.missingKey("type") }
-    guard let name = yaml["name"].string else { throw ConfigParserErrors.missingKey("name") }
-    switch type {
-    case "carthage":
-      self = .carthage(name)
-    default:
-      throw ConfigParserErrors.unknownDependency(type)
-    }
+    guard let name = yaml.string else { throw ConfigParserErrors.unknownDependency(yaml.description) }
+    self = .carthage(name)
   }
 }

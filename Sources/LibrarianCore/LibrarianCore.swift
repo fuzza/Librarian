@@ -6,7 +6,7 @@ public func run(manifest: Project) {
   
   let sampleProjectName: Path = Path(manifest.name)
   
-  let basePath: Path = "/Users/fuzza/Development/Librarian/"
+  let basePath: Path = Path.current
   let sampleProjectFolder: Path = basePath + "Sample/"
   let sampleProjectPath: Path = sampleProjectFolder + sampleProjectName
   
