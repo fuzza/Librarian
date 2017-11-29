@@ -43,6 +43,11 @@ class ConfigParserTests: XCTestCase {
     }
   }
   
+  func test_parse_invalidConfig_throws() {
+    let loader = makeLoader(returnedValue:"invalid_content");
+    XCTAssertThrowsError(try makeSut(loader).parseConfig(at: "config.yml"))
+  }
+  
   func test_parse_validConfig_returnsProjectObject() {
     let fixture =
       """
