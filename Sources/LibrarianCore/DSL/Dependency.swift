@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Dependency: AutoHashable, AutoEquatable {
+public enum Dependency: AutoHashable, AutoEquatable, Decodable {
   case carthage(String)
   
   internal var asString: String {
@@ -15,5 +15,11 @@ public enum Dependency: AutoHashable, AutoEquatable {
     case let .carthage(name):
       return name
     }
+  }
+  
+  // MARK: Decodable
+  public init(from decoder: Decoder) throws {
+    let name = try decoder.singleValueContainer().decode(String.self)
+    self = .carthage(name)
   }
 }

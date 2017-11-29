@@ -4,7 +4,7 @@ import PathKit
 
 public func run(manifest: Project) {
   
-  let sampleProjectName: Path = Path(manifest.name)
+  let sampleProjectName: Path = Path(manifest.project)
   
   let basePath: Path = Path.current
   let sampleProjectFolder: Path = basePath + "Sample/"

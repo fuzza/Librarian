@@ -7,7 +7,7 @@ let package = Package(
   name: "Librarian",
   dependencies: [
     .package(url: "https://github.com/xcodeswift/xcproj.git", from: "1.0.0"),
-    .package(url: "https://github.com/behrang/YamlSwift.git", from: "3.4.0"),
+    .package(url: "https://github.com/jpsim/Yams.git", from: "0.5.0"),
     .package(url: "https://github.com/kylef/Commander.git", .upToNextMinor(from: "0.6.0"))
   ],
   targets: [
@@ -16,9 +16,9 @@ let package = Package(
       dependencies: ["LibrarianCore", "Commander"]),
     .target(
       name: "LibrarianCore",
-      dependencies: ["xcproj", "Yaml"]),
+      dependencies: ["xcproj", "Yams"]),
     .testTarget(
       name: "LibrarianTests",
-      dependencies: ["LibrarianCore", "xcproj", "Yaml"])
+      dependencies: ["LibrarianCore", "xcproj", "Yams"])
   ]
 )

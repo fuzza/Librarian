@@ -62,7 +62,7 @@ class ConfigParserTests: XCTestCase {
     let project = try! makeSut(loader).parseConfig(at: "config.yml")
     
     XCTAssertEqual(project.targets.count, 2)
-    XCTAssertEqual(project.name, "Librarian.xcodeproj")
+    XCTAssertEqual(project.project, "Librarian.xcodeproj")
     XCTAssertEqual(project.targets.first, Target(name: "test", dependencies:[.carthage("RxSwift"), .carthage("RxCocoa")]))
     XCTAssertEqual(project.targets.last, Target(name: "app", dependencies:[.carthage("RxTest"), .carthage("RxBlocking")]))
   }

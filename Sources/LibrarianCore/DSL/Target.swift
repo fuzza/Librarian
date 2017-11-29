@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Target: AutoEquatable {
+public struct Target: AutoEquatable, Decodable {
   var name: String
   var dependencies: [Dependency]
   

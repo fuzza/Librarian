@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Yaml
+import Yams
 
 public class YamlConfigParser {
   
@@ -18,42 +18,7 @@ public class YamlConfigParser {
   
   public func parseConfig(at path: String) throws -> Project {
     let configBody = try loader.loadConfig(path)
-    print(configBody)
-    let yaml = try Yaml.load(configBody)
-    print(yaml)
-    
-    return try Project(yaml: yaml)
-  }
-}
-
-enum ConfigParserErrors: Error {
-  case missingKey(String)
-  case unknownDependency(String)
-}
-
-extension Project {
-  init(yaml: Yaml) throws {
-    guard let name = yaml["project"].string else { throw ConfigParserErrors.missingKey("name") }
-    guard let targets = yaml["targets"].array else { throw ConfigParserErrors.missingKey("targets") }
-    
-    self.name = name
-    self.targets = try targets.map { try Target(yaml: $0) }
-  }
-}
-
-extension Target {
-  init(yaml: Yaml) throws {
-    guard let name = yaml["name"].string else { throw ConfigParserErrors.missingKey("name") }
-    guard let dependencies = yaml["dependencies"].array else { throw ConfigParserErrors.missingKey("dependencies") }
-    
-    self.name = name
-    self.dependencies = try dependencies.map { try Dependency(yaml: $0) }
-  }
-}
-
-extension Dependency {
-  init(yaml: Yaml) throws {
-    guard let name = yaml.string else { throw ConfigParserErrors.unknownDependency(yaml.description) }
-    self = .carthage(name)
+    let decoder = YAMLDecoder()
+    return try decoder.decode(from: configBody);
   }
 }

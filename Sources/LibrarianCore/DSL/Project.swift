@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct Project: AutoEquatable {
-  internal var name: String
+public struct Project: AutoEquatable, Decodable {
+  internal var project: String
   internal var targets: [Target]
   
   func resolveDependencies(for target: Target) -> [Dependency] {
@@ -28,7 +28,7 @@ public struct Project: AutoEquatable {
   
   public init(name: String,
               targets: [Target]) {
-    self.name = name
+    self.project = name
     self.targets = targets
   }
 }

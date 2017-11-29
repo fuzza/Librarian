@@ -27,7 +27,7 @@ fileprivate func compareArrays<T>(lhs: [T], rhs: [T], compare: (_ lhs: T, _ rhs:
 // MARK: - Project AutoEquatable
 extension Project: Equatable {}
 public func == (lhs: Project, rhs: Project) -> Bool {
-    guard lhs.name == rhs.name else { return false }
+    guard lhs.project == rhs.project else { return false }
     guard lhs.targets == rhs.targets else { return false }
     return true
 }
