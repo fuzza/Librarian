@@ -2,11 +2,11 @@ import Foundation
 import xcproj
 import PathKit
 
-public func run(manifest: Project) {
+public func run(manifest: Project, workingDir: String) {
   
   let sampleProjectName: Path = Path(manifest.project)
   
-  let basePath: Path = Path.current
+  let basePath: Path = Path(workingDir)
   let sampleProjectFolder: Path = basePath + "Sample/"
   let sampleProjectPath: Path = sampleProjectFolder + sampleProjectName
   

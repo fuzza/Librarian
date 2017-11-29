@@ -1,0 +1,2 @@
+FLAG_DEBUG[config=Debug] = -DDEBUG
+OTHER_SWIFT_FLAGS[config=Debug] = $(FLAG_DEBUG)

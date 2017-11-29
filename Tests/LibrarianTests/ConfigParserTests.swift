@@ -10,13 +10,13 @@ import XCTest
 
 class ConfigParserTests: XCTestCase {
   
-  func test_parse_callsLoaderWithParams() {
+  func test_parse_callsLoaderWithAbsolutePath() {
     let loader = makeLoader()
 
-    _ = try? makeSut(loader).parseConfig(at: "config.yml")
+    _ = try? makeSut(loader, basePath: "/base/path").parseConfig(at: "config.yml")
     
     XCTAssertTrue(loader.loadConfigCalled)
-    XCTAssertEqual(loader.loadConfigReceivedPath, "config.yml")
+    XCTAssertEqual(loader.loadConfigReceivedPath, "/base/path/config.yml")
   }
   
   func test_parse_loaderThrowsNoFile_rethrows() {
@@ -81,7 +81,7 @@ class ConfigParserTests: XCTestCase {
     return loaderStub
   }
   
-  func makeSut(_ loader: ConfigLoader) -> YamlConfigParser {
-    return YamlConfigParser(loader: loader);
+  func makeSut(_ loader: ConfigLoader, basePath: String = "/test") -> YamlConfigParser {
+    return YamlConfigParser(loader: loader, basePath: basePath);
   }
 }

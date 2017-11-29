@@ -14,7 +14,7 @@ platform :ios do
   desc "Creates xcode project"
   lane :xcode do
     Dir.chdir("..") do
-      sh "swift package generate-xcodeproj && open *.xcodeproj & "
+      sh "swift package generate-xcodeproj --xcconfig-overrides Configs/Debug.xcconfig && open *.xcodeproj "
     end
   end
 

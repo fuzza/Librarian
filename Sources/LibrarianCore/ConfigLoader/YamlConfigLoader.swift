@@ -14,7 +14,8 @@ public class YamlConfigLoader {
 
 extension YamlConfigLoader: ConfigLoader {
   public func loadConfig(_ path: String) throws -> String {
-    let absolute = Path.current + path
+    let absolute = Path(path)
+    assert(absolute.isAbsolute, "Config loader expects absolute path, got relative \(path)")
     
     guard absolute.exists else {
       throw ConfigLoaderErrors.noFile(path)
