@@ -8,8 +8,8 @@
 import Foundation
 
 public struct Project: AutoEquatable, Decodable {
-  internal var project: String
-  internal var targets: [Target]
+  var project: String
+  var targets: [Target]
   
   func resolveDependencies(for target: Target) -> [Dependency] {
     return target.dependencies

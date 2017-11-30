@@ -18,7 +18,7 @@ let config = Option("config", "librarian.yml", description: "Path to configurati
 let integrate = command(config) { config in
   do {
     let project = try parser.parseConfig(at: config)
-    run(manifest: project, workingDir: basePath)
+    try run(manifest: project, workingDir: basePath)
   } catch {
     print(error)
   }

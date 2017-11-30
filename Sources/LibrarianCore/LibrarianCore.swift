@@ -2,13 +2,8 @@ import Foundation
 import xcproj
 import PathKit
 
-public func run(manifest: Project, workingDir: String) {
-  
-  let sampleProjectName: Path = Path(manifest.project)
-  
-  let basePath: Path = Path(workingDir)
-  let sampleProjectFolder: Path = basePath + "Sample/"
-  let sampleProjectPath: Path = sampleProjectFolder + sampleProjectName
+public func run(manifest: Project, workingDir: String) throws {
+  let projectPath: Path = Path(workingDir) + manifest.project
   
   let carthageRelativePath: Path = "Carthage/Build/iOS"
   
@@ -16,8 +11,7 @@ public func run(manifest: Project, workingDir: String) {
   let outputFolder = "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/"
   let scriptBody = "/usr/local/bin/carthage copy-frameworks"
   
-  
-  let projectFile = try! XcodeProj(path: sampleProjectPath)
+  let projectFile = try XcodeProj(path: projectPath)
   let pbxproj = projectFile.pbxproj
   
   // START FRAMEWORK SEARCH PATH

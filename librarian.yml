@@ -1,4 +1,4 @@
-project: Sample.xcodeproj
+project: Sample/Sample.xcodeproj
 targets:
   - name: Sample
     dependencies:
