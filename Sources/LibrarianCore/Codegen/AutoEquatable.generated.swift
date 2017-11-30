@@ -63,3 +63,14 @@ public func == (lhs: Dependency, rhs: Dependency) -> Bool {
         return lhs == rhs
     }
 }
+// MARK: - LookupErrors AutoEquatable
+extension LookupErrors: Equatable {}
+internal func == (lhs: LookupErrors, rhs: LookupErrors) -> Bool {
+    switch (lhs, rhs) {
+    case (.rootProjectNotFound, .rootProjectNotFound):
+        return true
+    case (.configurationsNotFound(let lhs), .configurationsNotFound(let rhs)):
+        return lhs == rhs
+    default: return false
+    }
+}
