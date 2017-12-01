@@ -11,7 +11,6 @@ public func run(manifest: Project, workingDir: String) throws {
   let outputFolder = "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/"
   let scriptBody = "/usr/local/bin/carthage copy-frameworks"
   
-  
   let projectFile = try XcodeProj(path: projectPath)
   let pbxproj = projectFile.pbxproj
   
@@ -27,6 +26,7 @@ public func run(manifest: Project, workingDir: String) throws {
     }
   
   // Find or create PBXGroup for frameworks in project's root group
+  
   let frameworksGroupName = "Frameworks"
   
   let rootGroup = try pbxproj.rootGroup()
@@ -34,69 +34,21 @@ public func run(manifest: Project, workingDir: String) throws {
     pbxproj.findGroup(frameworksGroupName, parent: rootGroup) ??
     pbxproj.createGroup(frameworksGroupName, addTo: rootGroup)
 
-  // ADD FRAMEWORKS AS FILE REFERENCES
-
-  /*
-   Add PBXFileReference
-
-   PBXFileReference
-
-   6FD7C34C1FC8BA2700971D97 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = "<group>"; };
-   
-   
-   Add to frameworks group
-
-   6FD7C34B1FC8BA2700971D97 /* Frameworks */ = {
-   isa = PBXGroup;
-   children = (
-   6FD7C34C1FC8BA2700971D97 /* RxCocoa.framework */,
-   );
-   name = Frameworks;
-   sourceTree = "<group>";
-   };
-
-   Add build file
-
-   6FD7C34D1FC8BA2800971D97 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6FD7C34C1FC8BA2700971D97 /* RxCocoa.framework */; };
-   */
-
+  
+  // Add file references to frameworks, add build files, attach to framework group
+  
   let linkedFrameworks = manifest.resolveAllDependencies()
-    .map { $0.asString }
-    .map {
-      LinkedFramework(name: $0,
-                      fileReferenceUid: pbxproj.generateUUID(for: PBXFileReference.self),
-                      buildFileUid: pbxproj.generateUUID(for: PBXBuildFile.self))
-  }
-
-  linkedFrameworks
-    .forEach {
-      // Add file reference
-      let fileReference = PBXFileReference(reference: $0.fileReferenceUid,
-                                           sourceTree: .group,
-                                           name: $0.fileName,
-                                           lastKnownFileType: "wrapper.framework",
-                                           path: carthageRelativePath.string + "/" + $0.fileName)
-      pbxproj.objects.addObject(fileReference)
-
-      // Add file reference to framework group
-      frameworksGroup.children.append($0.fileReferenceUid)
-
-      // Add build file
-      let buildFile = PBXBuildFile(reference: $0.buildFileUid, fileRef: $0.fileReferenceUid)
-      pbxproj.objects.addObject(buildFile)
-  }
-
-  // END ADD FRAMEWORKS AS FILE REFERENCES
+    .map { add($0, to: frameworksGroup, pbxproj: pbxproj) }
   
   // SHELL SCRIPT RUN PHASE
-
+    
   pbxproj.objects.nativeTargets
     .map { (_, value) in value }
     .forEach { target in
       let targetModel = manifest.target(target.name)!
       let dependencies = manifest.resolveDependencies(for: targetModel).map { $0.asString }
-      let inputPaths = dependencies.map { inputFolder + $0 + ".framework" }
-      let outputPaths = dependencies.map { outputFolder + $0 + ".framework" }
+      let inputPaths = dependencies.map { inputFolder + $0 }
+      let outputPaths = dependencies.map { outputFolder + $0 }
 
       let reference = pbxproj.generateUUID(for: PBXShellScriptBuildPhase.self)
       let scriptPhase = PBXShellScriptBuildPhase(reference: reference,
@@ -132,4 +84,17 @@ public func run(manifest: Project, workingDir: String) throws {
   }
   
   try! projectFile.write(path: projectPath, override: true)
+}
+
+func add(_ dependency: Dependency, to group: PBXGroup, pbxproj: PBXProj) -> LinkedFramework {
+  let name = dependency.asString
+  let path = "Carthage/Build/iOS"
+  
+  let file = pbxproj.findReference(name, parent: group) ??
+    pbxproj.addFramework(name, in: group, path: Path(path))
+  
+  let buildFile = pbxproj.findBuildFile(for: file) ??
+    pbxproj.addBuildFile(for: file)
+  
+  return LinkedFramework(name: name, fileReferenceUid: file.reference, buildFileUid: buildFile.reference)
 }

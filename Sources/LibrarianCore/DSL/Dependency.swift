@@ -10,16 +10,18 @@ import Foundation
 public enum Dependency: AutoHashable, AutoEquatable, Decodable {
   case carthage(String)
   
-  internal var asString: String {
+  var asString: String {
     switch self {
     case let .carthage(name):
-      return name
+      return name + ".framework"
     }
   }
-  
+
   // MARK: Decodable
   public init(from decoder: Decoder) throws {
     let name = try decoder.singleValueContainer().decode(String.self)
     self = .carthage(name)
   }
+  
+  
 }

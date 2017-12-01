@@ -7,6 +7,7 @@
 
 import Foundation
 import xcproj
+import PathKit
 
 enum LookupErrors: Error, AutoEquatable {
   case rootProjectNotFound
@@ -14,11 +15,10 @@ enum LookupErrors: Error, AutoEquatable {
   case configurationsNotFound(String)
 }
 
-// MARK: Project configuration lookup
-
 extension PBXProj {
   
   // MARK: Configurations
+  
   func projectConfigs() throws -> [XCBuildConfiguration] {
     let project = try root()
     return try configurations(of: project)
@@ -26,6 +26,7 @@ extension PBXProj {
   
   
   // MARK: Groups
+  
   func rootGroup() throws -> PBXGroup {
     let project = try root()
     guard let group = objects.groups.getReference(project.mainGroup) else {
@@ -51,6 +52,47 @@ extension PBXProj {
     parent.children.append(groupUid)
     
     return group
+  }
+  
+  // MARK: Frameworks
+  
+  func findReference(_ named: String, parent: PBXGroup) -> PBXFileReference? {
+    return parent.children
+      .flatMap { self.objects.fileReferences.getReference($0) }
+      .first { $0.name == named }
+  }
+  
+  func addFramework(_ named: String, in group: PBXGroup, path: Path) -> PBXFileReference {
+    let fullPath = path + named
+    
+    let uuid = generateUUID(for: PBXFileReference.self)
+    
+    let reference =  PBXFileReference(reference: uuid,
+                                      sourceTree: .group,
+                                      name: named,
+                                      lastKnownFileType: "wrapper.framework",
+                                      path: fullPath.string)
+    
+    objects.addObject(reference)
+    group.children.append(uuid)
+    
+    return reference
+  }
+  
+  // MARK: build files
+  
+  func findBuildFile(for fileReference: PBXFileReference) -> PBXBuildFile? {
+    return objects.buildFiles.values
+      .first { $0.fileRef == fileReference.reference }
+  }
+  
+  func addBuildFile(for file: PBXFileReference) -> PBXBuildFile {
+    let uuid = generateUUID(for: PBXBuildFile.self)
+    
+    let buildFile = PBXBuildFile(reference: uuid, fileRef: file.reference)
+    objects.addObject(buildFile)
+    
+    return buildFile
   }
   
   // MARK: Helpers
