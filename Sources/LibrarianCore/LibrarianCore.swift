@@ -11,6 +11,7 @@ public func run(manifest: Project, workingDir: String) throws {
   let outputFolder = "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/"
   let scriptBody = "/usr/local/bin/carthage copy-frameworks"
   
+  
   let projectFile = try XcodeProj(path: projectPath)
   let pbxproj = projectFile.pbxproj
   
@@ -25,49 +26,13 @@ public func run(manifest: Project, workingDir: String) throws {
       $0.frameworkSearchPaths.append(carthageSearchPath)
     }
   
-  // START CREATE PBXGROUP FOR FRAMEWORKS
-
-  /*
-   6FD7C34B1FC8BA2700971D97 /* Frameworks */ = {
-   isa = PBXGroup;
-   children = (
-   );
-   name = Frameworks;
-   sourceTree = "<group>";
-   };
-   */
-
-  let carthageGroupName = "Carthage"
-
-  let groupUid = pbxproj.generateUUID(for: PBXGroup.self)
-  let group = PBXGroup(reference: groupUid,
-                       children: [],
-                       sourceTree: .group,
-                       name: carthageGroupName)
-  pbxproj.objects.addObject(group)
+  // Find or create PBXGroup for frameworks in project's root group
+  let frameworksGroupName = "Frameworks"
   
-  // END CREATE PBXGROUP FOR FRAMEWORKS
-
-  // START ADD PBXGROUP TO ROOT PROJECT GROUP
-
-  /*
-   6FD7C2E91FC8982000971D97 = {
-   isa = PBXGroup;
-   children = (
-   6FD7C2F41FC8982000971D97 /* Sample */,
-   6FD7C3091FC8982000971D97 /* SampleTests */,
-   6FD7C2F31FC8982000971D97 /* Products */,
-   6FD7C34B1FC8BA2700971D97 /* Frameworks */,
-   );
-   sourceTree = "<group>";
-   };
-   */
-
-  let rootGroupUid = try pbxproj.root().mainGroup
-  let rootGroup = pbxproj.objects.groups.getReference(rootGroupUid)!
-  rootGroup.children.append(groupUid)
-
-  // END ADD PBXGROUP TO ROOT PROJECT GROUP
+  let rootGroup = try pbxproj.rootGroup()
+  let frameworksGroup =
+    pbxproj.findGroup(frameworksGroupName, parent: rootGroup) ??
+    pbxproj.createGroup(frameworksGroupName, addTo: rootGroup)
 
   // ADD FRAMEWORKS AS FILE REFERENCES
 
@@ -114,7 +79,7 @@ public func run(manifest: Project, workingDir: String) throws {
       pbxproj.objects.addObject(fileReference)
 
       // Add file reference to framework group
-      group.children.append($0.fileReferenceUid)
+      frameworksGroup.children.append($0.fileReferenceUid)
 
       // Add build file
       let buildFile = PBXBuildFile(reference: $0.buildFileUid, fileRef: $0.fileReferenceUid)
