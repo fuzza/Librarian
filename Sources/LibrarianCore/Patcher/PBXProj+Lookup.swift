@@ -95,6 +95,25 @@ extension PBXProj {
     return buildFile
   }
   
+  // MARK: Run scripts
+  
+  func findShellScript(_ named: String, in target: PBXNativeTarget) -> PBXShellScriptBuildPhase? {
+    return target.buildPhases
+      .flatMap { self.objects.shellScriptBuildPhases.getReference($0) }
+      .first { $0.name == named }
+  }
+  
+  func addShellScript(_ named: String, content: String, in target: PBXNativeTarget) -> PBXShellScriptBuildPhase {
+    let reference = generateUUID(for: PBXShellScriptBuildPhase.self)
+    let scriptPhase = PBXShellScriptBuildPhase(reference: reference,
+                                               name: named,
+                                               shellScript: content)
+    
+    objects.addObject(scriptPhase)
+    target.buildPhases.append(reference)
+    return scriptPhase
+  }
+  
   // MARK: Helpers
   
   internal func root() throws -> PBXProject {

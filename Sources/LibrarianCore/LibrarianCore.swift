@@ -30,18 +30,28 @@ public func run(manifest: Project, workingDir: String) throws {
   let frameworksGroupName = "Frameworks"
   
   let rootGroup = try pbxproj.rootGroup()
-  let frameworksGroup =
-    pbxproj.findGroup(frameworksGroupName, parent: rootGroup) ??
-    pbxproj.createGroup(frameworksGroupName, addTo: rootGroup)
+  let frameworksGroup = pbxproj.findGroup(frameworksGroupName, parent: rootGroup)
+    ?? pbxproj.createGroup(frameworksGroupName, addTo: rootGroup)
 
   
   // Add file references to frameworks, add build files, attach to framework group
   
   let linkedFrameworks = manifest.resolveAllDependencies()
     .map { add($0, to: frameworksGroup, pbxproj: pbxproj) }
+
+  // Add copy-framework script to project targets
   
-  // SHELL SCRIPT RUN PHASE
-    
+  let targets = pbxproj.objects.nativeTargets.values
+    .filter { manifest.contains(target: $0.name) }
+  
+  let scriptsMap: [String: PBXShellScriptBuildPhase] = targets.reduce(into: [:]) { dict, target in
+    dict[target.name] = pbxproj.findShellScript("Librarian", in: target)
+      ?? pbxproj.addShellScript("Librarian", content: scriptBody, in: target)
+  }
+  
+  // Add
+  
+  
   pbxproj.objects.nativeTargets
     .map { (_, value) in value }
     .forEach { target in

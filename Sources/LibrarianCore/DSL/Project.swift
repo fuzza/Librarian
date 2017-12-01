@@ -22,6 +22,10 @@ public struct Project: AutoEquatable, Decodable {
     return Set(flattenedDependencies)
   }
   
+  func contains(target: String) -> Bool {
+    return targets.first { $0.name == target} != nil
+  }
+  
   func target(_ name: String) -> Target? {
     return targets.first { $0.name == name }
   }
