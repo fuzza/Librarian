@@ -2,6 +2,10 @@ import Foundation
 import xcproj
 import PathKit
 
+enum CoreErrors: Error {
+  case noFrameworkBuildPhase(String)
+}
+
 public func run(manifest: Project, workingDir: String) throws {
   let projectPath: Path = Path(workingDir) + manifest.project
   
@@ -36,63 +40,68 @@ public func run(manifest: Project, workingDir: String) throws {
   
   // Add file references to frameworks, add build files, attach to framework group
   
-  let linkedFrameworks = manifest.resolveAllDependencies()
-    .map { add($0, to: frameworksGroup, pbxproj: pbxproj) }
+  let frameworks = manifest.resolveAllDependencies()
+    .map { (dep: Dependency) -> LinkedFramework in add(dep, to: frameworksGroup, pbxproj: pbxproj) }
 
-  // Add copy-framework script to project targets
+  let frameworkMap: [String: LinkedFramework] = frameworks.reduce(into: [:]) { dict, framework in
+    dict[framework.name] = framework
+  }
+  
+  // Filter targets included to manifest
   
   let targets = pbxproj.objects.nativeTargets.values
     .filter { manifest.contains(target: $0.name) }
+  
+  // Add copy-framework script to project targets, prepare scripts map
   
   let scriptsMap: [String: PBXShellScriptBuildPhase] = targets.reduce(into: [:]) { dict, target in
     dict[target.name] = pbxproj.findShellScript("Librarian", in: target)
       ?? pbxproj.addShellScript("Librarian", content: scriptBody, in: target)
   }
   
-  // Add
-  
-  
-  pbxproj.objects.nativeTargets
-    .map { (_, value) in value }
-    .forEach { target in
-      let targetModel = manifest.target(target.name)!
-      let dependencies = manifest.resolveDependencies(for: targetModel).map { $0.asString }
-      let inputPaths = dependencies.map { inputFolder + $0 }
-      let outputPaths = dependencies.map { outputFolder + $0 }
-
-      let reference = pbxproj.generateUUID(for: PBXShellScriptBuildPhase.self)
-      let scriptPhase = PBXShellScriptBuildPhase(reference: reference,
-                                                 name: "Integrator",
-                                                 inputPaths: inputPaths,
-                                                 outputPaths: outputPaths,
-                                                 shellScript: scriptBody)
-
-      pbxproj.objects.addObject(scriptPhase)
-      target.buildPhases.append(reference)
-
-      // Link binary with libraries
-      
-      /*
-       Add PBXFrameworksBuildPhase
-
-       isa = PBXFrameworksBuildPhase;
-       buildActionMask = 2147483647;
-       files = (
-       6FD7C34D1FC8BA2800971D97 /* RxCocoa.framework in Frameworks */,
-       );
-       runOnlyForDeploymentPostprocessing = 0;
-
-       */
-
-      let frameworksBuildPhase = target.buildPhases
-        .flatMap { pbxproj.objects.frameworksBuildPhases[$0] }
-        .first!
-
-      linkedFrameworks
-        .filter { dependencies.contains($0.name) }
-        .forEach { frameworksBuildPhase.files.append($0.buildFileUid) }
+  // Prepare build framework phases map
+  let buildPhasesMap: [String: PBXFrameworksBuildPhase] = try targets.reduce(into: [:]) { dict, target in
+    guard let phase = pbxproj.findFrameworkPhase(in: target) else {
+      throw CoreErrors.noFrameworkBuildPhase(target.name)
+    }
+    dict[target.name] = phase
   }
   
+  // Copy and link binary with framework
+  
+  manifest.targets.forEach { target in
+    target.dependencies.forEach { dependency in
+
+      guard
+        let framework = frameworkMap[dependency.asString],
+        let shellScript = scriptsMap[target.name],
+        let buildPhase = buildPhasesMap[target.name] else {
+          // TODO: throw error from here
+          return
+      }
+      
+      let frameworkName = framework.name
+      
+      // Add input path to framework to copy-frameworks script
+      let inputPath = inputFolder + frameworkName
+      if !shellScript.inputPaths.contains(inputPath) {
+        shellScript.inputPaths.append(inputPath)
+      }
+      
+      // Add output path to framework to copy-frameworks script
+      let outputPath = outputFolder + frameworkName
+      if !shellScript.outputPaths.contains(outputPath) {
+        shellScript.outputPaths.append(outputPath)
+      }
+      
+      // Add build file uid of framework to `Link binary with libraries`
+      let buildFileUid = framework.buildFileUid
+      if !buildPhase.files.contains(buildFileUid) {
+        buildPhase.files.append(buildFileUid)
+      }
+    }
+  }
+
   try! projectFile.write(path: projectPath, override: true)
 }
 

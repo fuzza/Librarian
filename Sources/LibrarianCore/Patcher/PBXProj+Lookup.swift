@@ -114,6 +114,14 @@ extension PBXProj {
     return scriptPhase
   }
   
+  // MARK: Build phases
+  
+  func findFrameworkPhase(in target: PBXNativeTarget) -> PBXFrameworksBuildPhase? {
+    return target.buildPhases
+      .flatMap { self.objects.frameworksBuildPhases[$0] }
+      .first
+  }
+  
   // MARK: Helpers
   
   internal func root() throws -> PBXProject {
