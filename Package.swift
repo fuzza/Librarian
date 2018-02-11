@@ -8,10 +8,10 @@ import PackageDescription
 let package = Package(
   name: "Librarian",
   dependencies: [
-    .package(url: "https://github.com/xcodeswift/xcproj.git", from: "1.0.0"),
+    .package(url: "https://github.com/xcodeswift/xcproj.git", from: "4.0.0"),
     .package(url: "https://github.com/jpsim/Yams.git", from: "0.5.0"),
-    .package(url: "https://github.com/kylef/Commander.git", .upToNextMinor(from: "0.6.0")),
-    .package(url: "https://github.com/Quick/Nimble.git", from: "7.0.0"),
+    .package(url: "https://github.com/kylef/Commander.git", .upToNextMinor(from: "0.8.0")),
+    .package(url: "https://github.com/Quick/Nimble.git", .upToNextMinor(from: "7.0.0")),
   ],
   targets: [
     .target(

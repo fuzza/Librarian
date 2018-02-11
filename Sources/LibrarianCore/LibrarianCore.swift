@@ -9,8 +9,6 @@ enum CoreErrors: Error {
 public func run(manifest: Project, workingDir: String) throws {
   let projectPath: Path = Path(workingDir) + manifest.project
   
-  let carthageRelativePath: Path = "Carthage/Build/iOS"
-  
   let inputFolder = "$(SRCROOT)/Carthage/Build/iOS/"
   let outputFolder = "$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/"
   let scriptBody = "/usr/local/bin/carthage copy-frameworks"
@@ -102,18 +100,18 @@ public func run(manifest: Project, workingDir: String) throws {
     }
   }
 
-  try! projectFile.write(path: projectPath, override: true)
+  try projectFile.writePBXProj(path: projectPath, override: true)
 }
 
 func add(_ dependency: Dependency, to group: PBXGroup, pbxproj: PBXProj) -> LinkedFramework {
   let name = dependency.asString
   let path = "Carthage/Build/iOS"
   
-  let file = pbxproj.findReference(name, parent: group) ??
+  let fileReference = pbxproj.findReference(name, parent: group) ??
     pbxproj.addFramework(name, in: group, path: Path(path))
   
-  let buildFile = pbxproj.findBuildFile(for: file) ??
-    pbxproj.addBuildFile(for: file)
+  let buildFileReference = pbxproj.findBuildFile(for: fileReference) ??
+    pbxproj.addBuildFile(for: fileReference)
   
-  return LinkedFramework(name: name, fileReferenceUid: file.reference, buildFileUid: buildFile.reference)
+  return LinkedFramework(name: name, fileReferenceUid: fileReference, buildFileUid: buildFileReference)
 }

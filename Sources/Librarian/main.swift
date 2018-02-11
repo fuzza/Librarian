@@ -14,7 +14,7 @@ import Commander
 
 let parser = YamlConfigParser(basePath: basePath)
 
-let config = Option("config", "librarian.yml", description: "Path to configuration file")
+let config = Option("config", default: "librarian.yml", flag: "c", description: "Path to configuration file")
 let integrate = command(config) { config in
   do {
     let project = try parser.parseConfig(at: config)

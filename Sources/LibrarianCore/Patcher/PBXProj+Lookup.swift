@@ -42,57 +42,59 @@ extension PBXProj {
   }
   
   func createGroup(_ named: String, addTo parent: PBXGroup) -> PBXGroup {
-    let groupUid = generateUUID(for: PBXGroup.self)
-    let group = PBXGroup(reference: groupUid,
-                         children: [],
+    let group = PBXGroup(children: [],
                          sourceTree: .group,
                          name: named)
-    
-    objects.addObject(group)
-    parent.children.append(groupUid)
+    let reference = objects.generateReference(group, named)
+    objects.addObject(group, reference: reference)
+    parent.children.append(reference)
     
     return group
   }
   
   // MARK: Frameworks
   
-  func findReference(_ named: String, parent: PBXGroup) -> PBXFileReference? {
-    return parent.children
-      .flatMap { self.objects.fileReferences.getReference($0) }
-      .first { $0.name == named }
+  func findReference(_ named: String, parent: PBXGroup) -> String? {
+    for child in parent.children {
+      if let fileRef = self.objects.fileReferences.getReference(child), fileRef.name == named {
+        return child
+      }
+    }
+    return nil
   }
   
-  func addFramework(_ named: String, in group: PBXGroup, path: Path) -> PBXFileReference {
+  func addFramework(_ named: String, in group: PBXGroup, path: Path) -> String {
     let fullPath = path + named
+
+    let fileRef =  PBXFileReference(sourceTree: .group,
+                                    name: named,
+                                    lastKnownFileType: "wrapper.framework",
+                                    path: fullPath.string)
     
-    let uuid = generateUUID(for: PBXFileReference.self)
+    let reference = objects.generateReference(fileRef, named)
     
-    let reference =  PBXFileReference(reference: uuid,
-                                      sourceTree: .group,
-                                      name: named,
-                                      lastKnownFileType: "wrapper.framework",
-                                      path: fullPath.string)
-    
-    objects.addObject(reference)
-    group.children.append(uuid)
+    objects.addObject(fileRef, reference: reference)
+    group.children.append(reference)
     
     return reference
   }
   
   // MARK: build files
   
-  func findBuildFile(for fileReference: PBXFileReference) -> PBXBuildFile? {
-    return objects.buildFiles.values
-      .first { $0.fileRef == fileReference.reference }
+  func findBuildFile(for fileReference: String) -> String? {
+    for (key, value) in objects.buildFiles where value.fileRef == fileReference {
+      return key
+    }
+    return nil
   }
   
-  func addBuildFile(for file: PBXFileReference) -> PBXBuildFile {
-    let uuid = generateUUID(for: PBXBuildFile.self)
+  func addBuildFile(for file: String) -> String {
+    let buildFile = PBXBuildFile(fileRef: file)
+    let reference = objects.generateReference(buildFile, file)
     
-    let buildFile = PBXBuildFile(reference: uuid, fileRef: file.reference)
-    objects.addObject(buildFile)
-    
-    return buildFile
+    objects.addObject(buildFile, reference: reference)
+
+    return reference
   }
   
   // MARK: Run scripts
@@ -104,12 +106,11 @@ extension PBXProj {
   }
   
   func addShellScript(_ named: String, content: String, in target: PBXNativeTarget) -> PBXShellScriptBuildPhase {
-    let reference = generateUUID(for: PBXShellScriptBuildPhase.self)
-    let scriptPhase = PBXShellScriptBuildPhase(reference: reference,
-                                               name: named,
+    let scriptPhase = PBXShellScriptBuildPhase(name: named,
                                                shellScript: content)
+    let reference = objects.generateReference(scriptPhase, named)
     
-    objects.addObject(scriptPhase)
+    objects.addObject(scriptPhase, reference: reference)
     target.buildPhases.append(reference)
     return scriptPhase
   }

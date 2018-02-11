@@ -42,6 +42,6 @@ class XCBuildConfigurationTests: XCTestCase {
   
   // MARK: Helpers
   func makeSut(_ settings: BuildSettings = [:]) -> XCBuildConfiguration {
-    return XCBuildConfiguration(reference: "01ACSDGET", name: "Debug", buildSettings: settings);
+    return XCBuildConfiguration(name: "Debug", buildSettings: settings);
   }
 }
