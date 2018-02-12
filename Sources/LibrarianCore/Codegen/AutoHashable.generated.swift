@@ -42,6 +42,15 @@ fileprivate func hashDictionary<T: Hashable, U: Hashable>(_ dictionary: [T: U]?)
 
 
 // MARK: - AutoHashable for classes, protocols, structs
+// MARK: - Target AutoHashable
+extension Target: Hashable {
+    public var hashValue: Int {
+        return combineHashes([
+            name.hashValue,
+            hashArray(dependencies),
+            0])
+    }
+}
 
 // MARK: - AutoHashable for Enums
 

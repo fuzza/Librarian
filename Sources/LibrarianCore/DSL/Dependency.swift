@@ -22,6 +22,4 @@ public enum Dependency: AutoHashable, AutoEquatable, Decodable {
     let name = try decoder.singleValueContainer().decode(String.self)
     self = .carthage(name)
   }
-  
-  
 }
