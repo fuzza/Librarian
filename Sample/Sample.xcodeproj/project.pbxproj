@@ -13,6 +13,11 @@
 		6FD7C2FD1FC8982000971D97 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6FD7C2FC1FC8982000971D97 /* Assets.xcassets */; };
 		6FD7C3001FC8982000971D97 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6FD7C2FE1FC8982000971D97 /* LaunchScreen.storyboard */; };
 		6FD7C30B1FC8982000971D97 /* SampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD7C30A1FC8982000971D97 /* SampleTests.swift */; };
+		BF_248145388442 /* RxBlocking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_718633238651 /* RxBlocking.framework */; };
+		BF_418228770448 /* RxTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_695100049400 /* RxTest.framework */; };
+		"BF_635467315498-1" /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_496965633712 /* RxCocoa.framework */; };
+		BF_855516879560 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_718807171917 /* RxSwift.framework */; };
+		"BF_855516879560-1" /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_718807171917 /* RxSwift.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -36,6 +41,10 @@
 		6FD7C3061FC8982000971D97 /* SampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6FD7C30A1FC8982000971D97 /* SampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SampleTests.swift; sourceTree = "<group>"; };
 		6FD7C30C1FC8982000971D97 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FR_496965633712 /* RxCocoa.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = RxCocoa.framework; path = Carthage/Build/iOS/RxCocoa.framework; sourceTree = SOURCE_ROOT; };
+		FR_695100049400 /* RxTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = RxTest.framework; path = Carthage/Build/iOS/RxTest.framework; sourceTree = SOURCE_ROOT; };
+		FR_718633238651 /* RxBlocking.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = RxBlocking.framework; path = Carthage/Build/iOS/RxBlocking.framework; sourceTree = SOURCE_ROOT; };
+		FR_718807171917 /* RxSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; name = RxSwift.framework; path = Carthage/Build/iOS/RxSwift.framework; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BF_855516879560 /* RxSwift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,6 +60,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				"BF_855516879560-1" /* RxSwift.framework in Frameworks */,
+				"BF_635467315498-1" /* RxCocoa.framework in Frameworks */,
+				BF_248145388442 /* RxBlocking.framework in Frameworks */,
+				BF_418228770448 /* RxTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,6 +76,7 @@
 				6FD7C2F41FC8982000971D97 /* Sample */,
 				6FD7C3091FC8982000971D97 /* SampleTests */,
 				6FD7C2F31FC8982000971D97 /* Products */,
+				G_7396449197813 /* Librarian */,
 			);
 			sourceTree = "<group>";
 		};
@@ -96,6 +111,17 @@
 			path = SampleTests;
 			sourceTree = "<group>";
 		};
+		G_7396449197813 /* Librarian */ = {
+			isa = PBXGroup;
+			children = (
+				FR_718807171917 /* RxSwift.framework */,
+				FR_496965633712 /* RxCocoa.framework */,
+				FR_718633238651 /* RxBlocking.framework */,
+				FR_695100049400 /* RxTest.framework */,
+			);
+			name = Librarian;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -106,6 +132,7 @@
 				6FD7C2EE1FC8982000971D97 /* Sources */,
 				6FD7C2EF1FC8982000971D97 /* Frameworks */,
 				6FD7C2F01FC8982000971D97 /* Resources */,
+				SSBP_1131806061 /* Sample_Librarian */,
 			);
 			buildRules = (
 			);
@@ -123,6 +150,7 @@
 				6FD7C3021FC8982000971D97 /* Sources */,
 				6FD7C3031FC8982000971D97 /* Frameworks */,
 				6FD7C3041FC8982000971D97 /* Resources */,
+				SSBP_2444157275 /* SampleTests_Librarian */,
 			);
 			buildRules = (
 			);
@@ -193,6 +221,51 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		SSBP_1131806061 /* Sample_Librarian */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+			);
+			name = Sample_Librarian;
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			showEnvVarsInLog = 0;
+		};
+		SSBP_2444157275 /* SampleTests_Librarian */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/RxSwift.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxCocoa.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxBlocking.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/RxTest.framework",
+			);
+			name = SampleTests_Librarian;
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxBlocking.framework",
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxTest.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6FD7C2EE1FC8982000971D97 /* Sources */ = {
@@ -276,6 +349,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -333,6 +407,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;

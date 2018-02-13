@@ -33,48 +33,25 @@ class CreateBuildFileReference: BaseStep, Runnable {
       throw Errors.noFrameworkBuildPhase(target: target)
     }
     
-    let buildFile: ObjectReference<PBXBuildFile>
-    let buildFiles = findOrCreateBuildFiles()
-    
-    if buildFiles.count > 1 {
-        buildFile = deduplicate(buildFiles: buildFiles)
-    } else {
-        buildFile = buildFiles[0]
-    }
-    
+    let buildFile = findOrCreateBuildFile(phase: frameworkBuildPhase)
     if !frameworkBuildPhase.files.contains(buildFile.reference) {
       frameworkBuildPhase.files.append(buildFile.reference)
     }
     return buildFile
   }
-  
-  func deduplicate(buildFiles: [ObjectReference<PBXBuildFile>]) -> ObjectReference<PBXBuildFile> {
-    let filesToDrop = buildFiles.dropFirst()
-    let fileToKeep = buildFiles[0]
     
-    filesToDrop.forEach { buildFileRef in
-        pbxproj.objects.buildFiles.removeValue(forKey: buildFileRef.reference)
+func findOrCreateBuildFile(phase: PBXFrameworksBuildPhase) -> ObjectReference<PBXBuildFile> {
+    let existingBuildFileRef = pbxproj.objects.buildFiles.objectReferences.first {
+      $0.object.fileRef == fileRef.reference && phase.files.contains($0.reference)
     }
     
-    pbxproj.objects.frameworksBuildPhases.values.forEach { phase in
-        phase.files = phase.files.filter { !filesToDrop.map { $0.reference }.contains($0) }
-    }
-    
-    return fileToKeep
-  }
-    
-  func findOrCreateBuildFiles() -> [ObjectReference<PBXBuildFile>] {
-    let existingBuildFiles = pbxproj.objects.buildFiles.objectReferences.filter {
-      $0.object.fileRef == fileRef.reference
-    }
-    
-    if !existingBuildFiles.isEmpty {
-      return existingBuildFiles
+    if let existingBuildFile = existingBuildFileRef {
+      return existingBuildFile
     }
     
     let buildFile = PBXBuildFile(fileRef: fileRef.reference)
     let reference = pbxproj.objects.generateReference(buildFile, fileRef.reference)
     pbxproj.objects.addObject(buildFile, reference: reference)
-    return [ObjectReference(reference: reference, object: buildFile)]
+    return ObjectReference(reference: reference, object: buildFile)
   }
 }
